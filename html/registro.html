@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario - Sistema de Votación</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="registration-container">
+        <h2>Crear Cuenta</h2>
+        <form id="registrationForm" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="name">Nombre Completo:</label>
+                <input type="text" id="name" name="name" required>
+                <div class="error-message" id="nameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required minlength="8">
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar Contraseña:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <div class="error-message" id="confirmError"></div>
+            </div>
+
+            <button type="submit">Registrarse</button>
+        </form>
+
+        <div class="login-link">
+            ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            let isValid = true;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+            // Validar coincidencia de contraseñas
+            if (password !== confirmPassword) {
+                document.getElementById('confirmError').textContent = 'Las contraseñas no coinciden';
+                document.getElementById('confirmError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validar fortaleza de contraseña
+            if (password.length < 8) {
+                document.getElementById('passwordError').textContent = 'La contraseña debe tener al menos 8 caracteres';
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                alert('Registro exitoso! (Simulación)');
+                document.getElementById('registrationForm').reset();
+            }
+
+            return false; // Evitar envío real para este ejemplo
+        }
+    </script>
+</body>
+</html>

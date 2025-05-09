@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Sistema de Votación</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Iniciar Sesión</h2>
+        <form id="loginForm" onsubmit="return validateLogin()">
+            <div class="form-group">
+                <label for="loginEmail">Correo Electrónico:</label>
+                <input type="email" id="loginEmail" name="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Contraseña:</label>
+                <input type="password" id="loginPassword" name="password" required>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember"> Recordar sesión
+                </label>
+                <a href="forgot-password.html" class="forgot-password">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <div class="auth-link">
+            ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
+        </div>
+    </div>
+
+    <script>
+        function validateLogin() {
+            let isValid = true;
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+            // Validación básica de email
+            if (!/\S+@\S+\.\S+/.test(email)) {
+                document.getElementById('emailError').textContent = 'Ingrese un correo válido';
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validación básica de contraseña
+            if (password.length < 8) {
+                document.getElementById('passwordError').textContent = 'La contraseña debe tener al menos 8 caracteres';
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Simular envío exitoso
+                alert('Inicio de sesión exitoso! (Simulación)');
+                document.getElementById('loginForm').reset();
+            }
+
+            return false; // Evitar envío real para este ejemplo
+        }
+    </script>
+</body>
+</html>
