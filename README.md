@@ -1,1 +1,5 @@
 # BlockchainVoteSystem
+Este sistema de votación está diseñado para ser utilizado en el contexto de una ONG, con el objetivo de elegir de forma transparente y segura a la próxima persona que ocupará el cargo de presidente.
+Cada integrante de la organización deberá registrarse previamente en la plataforma para poder emitir su voto. El sistema garantiza que cada usuario pueda votar una única vez, validando la identidad del votante y asegurando la unicidad del sufragio.
+Los votos se almacenarán en una blockchain, lo que permitirá asegurar la integridad de la información, evitar manipulaciones y facilitar la trazabilidad del proceso. Además, se implementará un mecanismo de verificación que permitirá a cada votante confirmar que su voto fue registrado correctamente, sin comprometer su privacidad.
+El sistema contará con una visualización en tiempo real de los resultados parciales, permitiendo monitorear el avance de la votación de manera clara y confiable. Al finalizar el proceso, se publicará el resultado final, respaldado por los registros inmutables de la cadena de bloques.
