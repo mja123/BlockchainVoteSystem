@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario - Sistema de Votación</title>
     <link rel="stylesheet" href="../css/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div id="navbar-container"></div>
     <div class="registration-container">
         <h2>Crear Cuenta</h2>
         <form id="registrationForm" onsubmit="return validateForm()">
@@ -42,36 +46,42 @@
         </div>
     </div>
 
-    <script>
-        function validateForm() {
-            let isValid = true;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+        <script>
+            function validateForm() {
+                let isValid = true;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
 
-            // Reset error messages
-            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+                // Reset error messages
+                document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
 
-            // Validar coincidencia de contraseñas
-            if (password !== confirmPassword) {
-                document.getElementById('confirmError').textContent = 'Las contraseñas no coinciden';
-                document.getElementById('confirmError').style.display = 'block';
-                isValid = false;
-            }
+                // Validar coincidencia de contraseñas
+                if (password !== confirmPassword) {
+                    document.getElementById('confirmError').textContent = 'Las contraseñas no coinciden';
+                    document.getElementById('confirmError').style.display = 'block';
+                    isValid = false;
+                }
 
-            // Validar fortaleza de contraseña
-            if (password.length < 8) {
-                document.getElementById('passwordError').textContent = 'La contraseña debe tener al menos 8 caracteres';
-                document.getElementById('passwordError').style.display = 'block';
-                isValid = false;
-            }
+                // Validar fortaleza de contraseña
+                if (password.length < 8) {
+                    document.getElementById('passwordError').textContent = 'La contraseña debe tener al menos 8 caracteres';
+                    document.getElementById('passwordError').style.display = 'block';
+                    isValid = false;
+                }
 
-            if (isValid) {
-                alert('Registro exitoso! (Simulación)');
-                document.getElementById('registrationForm').reset();
-            }
+                if (isValid) {
+                    alert('Registro exitoso! (Simulación)');
+                    document.getElementById('registrationForm').reset();
+                }
 
-            return false; // Evitar envío real para este ejemplo
-        }
-    </script>
-</body>
+                return false;
+        </script>
+        <script>
+            fetch('navbar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('navbar-container').innerHTML = data;
+                });
+        </script>
+    </body>
 </html>
