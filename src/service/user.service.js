@@ -7,14 +7,17 @@ export default class UserService {
     }
 
     // Registro con hash de contraseña
-    async createUser(name, email, password) {
+    async createUser(userData) {
+        const { name, email, password } = userData;
         const hashedPassword = await bcrypt.hash(password, 10);
+        
         const query = `
             INSERT INTO vote_schema.users (name, email, password) 
             VALUES ($1, $2, $3) 
             RETURNING *
         `;
         const result = await this.db.query(query, [name, email, hashedPassword]);
+        console.log(result.rows[0]);
         return result.rows[0];
     }
 

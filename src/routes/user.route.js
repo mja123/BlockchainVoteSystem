@@ -4,7 +4,7 @@ import UserController from "../controller/user.controller.js";
 const router = Router();
 const controller = new UserController()
 
-router.post("/", async (req, res) => {
+router.post("/register", async (req, res) => {
     const userData = req.body;
     
     try {
@@ -16,4 +16,14 @@ router.post("/", async (req, res) => {
     }
 })
 
+router.post("/login", async (req, res) => {
+    const userData = req.body;
+    
+    try {
+        const user = await controller.authenticate(userData) 
+        res.json({ user })
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
+})
 export default router;

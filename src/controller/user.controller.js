@@ -1,4 +1,5 @@
 import UserService from '../service/user.service.js';
+import User from '../service/model/User.js';
 
 export default class UserController {
     constructor() {
@@ -7,14 +8,26 @@ export default class UserController {
 
     async addUser(userData) {
         try {
+            const { name, email, password } = userData;
+            const newUser = new User(name, email, password);
+            const userAdded = await this.userService.createUser(newUser);
 
-            const userAdded = await this.userService.addUser(userData);
             if (userAdded < 1) {
                 throw new Error("User not added")
             }
             return userAdded;
         } catch (error) {
             throw new Error("Error adding user: " + error.message);
+        }
+    }
+
+        async authenticate(userData) {
+        try {
+            const { email, password } = userData;
+            const userAdded = await this.userService.authenticate(email, password);
+            return userAdded;
+        } catch (error) {
+            throw new Error("Error getting user: " + error.message);
         }
     }
 }
