@@ -8,9 +8,7 @@ export default class UserController {
 
     async addUser(userData) {
         try {
-            const { name, email, password } = userData;
-            const newUser = new User(name, email, password);
-            const userAdded = await this.userService.createUser(newUser);
+            const userAdded = await this.userService.createUser(userData);
 
             if (userAdded < 1) {
                 throw new Error("User not added")
