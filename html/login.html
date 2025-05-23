@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Sistema de Votación</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <div class="auth-container">
+        <h2>Iniciar Sesión</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail">Correo Electrónico:</label>
+                <input type="email" id="loginEmail" name="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Contraseña:</label>
+                <input type="password" id="loginPassword" name="password" required>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember"> Recordar sesión
+                </label>
+                <a href="forgot-password.html" class="forgot-password">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <div class="auth-link">
+            ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
+        </div>
+    </div>
+
+    <script>
+        // Cargar navbar
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar-container').innerHTML = data;
+            });
+
+        // Manejar login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Resetear errores
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+
+            // Obtener valores
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Mostrar errores del servidor
+                    if (data.errors) {
+                        data.errors.forEach(error => {
+                            const errorElement = document.getElementById(`${error.field}Error`);
+                            if (errorElement) {
+                                errorElement.textContent = error.message;
+                                errorElement.style.display = 'block';
+                            }
+                        });
+                    } else {
+                        throw new Error(data.message || 'Error en el servidor');
+                    }
+                    return;
+                }
+
+                // Login exitoso
+                localStorage.setItem('authToken', data.token); // Almacenar token
+                window.location.href = 'dashboard.html'; // Redirigir
+
+            } catch (error) {
+                // Manejar errores de red o validación
+                document.getElementById('passwordError').textContent = error.message;
+                document.getElementById('passwordError').style.display = 'block';
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

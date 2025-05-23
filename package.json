@@ -1,0 +1,26 @@
+{
+  "name": "votesystem",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mja123/BlockchainVoteSystem.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mja123/BlockchainVoteSystem/issues"
+  },
+  "homepage": "https://github.com/mja123/BlockchainVoteSystem#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "16.5.0",
+    "express": "5.1.0",
+    "pg": "^8.15.6"
+  }
+}
