@@ -72,21 +72,14 @@
 </div>
 
     <script>
-      // Cargar navbar
-      fetch("navbar.html")
-        .then((response) => response.text())
-        .then((data) => {
-          document.getElementById("navbar-container").innerHTML = data;
-        });
-
-      // Configuración inicial de votos
+      // Configuración inicial
       let votes = {
         Adorni: 0,
         Larreta: 0,
-        Blanco: 0,
+        Blanco: 0
       };
 
-      // Cargar votos previos del localStorage
+      // Cargar votos previos
       if (localStorage.getItem("votes")) {
         votes = JSON.parse(localStorage.getItem("votes"));
       }
@@ -97,43 +90,49 @@
         const resultsDiv = document.getElementById("results");
         resultsDiv.innerHTML = "";
 
-        for (const [option, count] of Object.entries(votes)) {
-          const percentage =
-            totalVotes === 0 ? 0 : ((count / totalVotes) * 100).toFixed(1);
+        for (const [candidate, count] of Object.entries(votes)) {
+          const percentage = totalVotes > 0 
+            ? ((count / totalVotes) * 100).toFixed(1)
+            : 0;
 
-          const optionDiv = document.createElement("div");
-          optionDiv.innerHTML = `
-            <div style="margin: 10px 0;">
-              <strong>${option}:</strong> ${count} votos (${percentage}%)
-              <div class="result-bar" style="width: ${percentage}%"></div>
+          resultsDiv.innerHTML += `
+            <div class="result-item">
+              <span class="candidate-name">${candidate}</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percentage}%"></div>
+              </div>
+              <span class="vote-count">${count} votos (${percentage}%)</span>
             </div>
           `;
-          resultsDiv.appendChild(optionDiv);
         }
       }
 
-      // Función para votar
-      function vote(option) {
-        const buttons = document.querySelectorAll(".vote-option");
-        buttons.forEach((btn) => btn.classList.remove("selected"));
-        event.target.classList.add("selected");
-
-        if (confirm(`¿Estás seguro que quieres votar por ${option}?`)) {
-          votes[option]++;
-          localStorage.setItem("votes", JSON.stringify(votes));
-          updateResults();
-        }
-      }
-
-      // Event Listeners
+      // Event listeners para los botones
       document.querySelectorAll(".vote-option").forEach((button) => {
-        button.addEventListener("click", () => {
-          vote(button.dataset.option);
+        button.addEventListener("click", (event) => {
+          const selectedButton = event.currentTarget;
+          const option = selectedButton.dataset.option;
+          
+          // Remover selección previa
+          document.querySelectorAll(".vote-option").forEach(btn => {
+            btn.classList.remove('selected');
+          });
+          selectedButton.classList.add('selected');
+
+          if (confirm(`¿Confirmas tu voto para ${option}?`)) {
+            votes[option]++;
+            localStorage.setItem("votes", JSON.stringify(votes));
+            updateResults();
+          }
         });
       });
 
-      // Mostrar resultados iniciales
-      updateResults();
+      // Cargar navbar
+      fetch("navbar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbar-container").innerHTML = data;
+        });
 
       // Mostrar modal al cargar
       window.addEventListener("DOMContentLoaded", () => {
@@ -145,6 +144,8 @@
         closeBtn.addEventListener("click", () => {
           modal.style.display = "none";
         });
+        // Mostrar resultados iniciales
+        updateResults();
       });
     </script>
   </body>
