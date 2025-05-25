@@ -8,19 +8,24 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    body {
+        padding-top: 160px; /* Aumentar según altura del logo */
+        min-height: 100vh;
+        box-sizing: border-box; /* Importante para cálculo correcto */
+    }
 }
 
 .registration-container {
     background: white;
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
 }
 
 h2 {
-    color: #2b6e4d;
+    color: #00457c;
     text-align: center;
     margin-bottom: 1.5rem;
 }
@@ -45,8 +50,8 @@ input {
 
 input:focus {
     outline: none;
-    border-color: #2b6e4d;
-    box-shadow: 0 0 0 2px rgba(63,81,181,0.2);
+    border-color: #00457c;
+    box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
 }
 
 button {
@@ -62,7 +67,7 @@ button {
 }
 
 button:hover {
-    background-color: #2b6e4d;
+    background-color: #00457c;
 }
 
 .error-message {
@@ -78,7 +83,7 @@ button:hover {
 }
 
 .login-link a {
-    color: #2b6e4d;
+    color: #00457c;
     text-decoration: none;
 }
 /* Estilos adicionales para login */
@@ -86,7 +91,7 @@ button:hover {
     background: white;
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
 }
@@ -112,7 +117,7 @@ button:hover {
 }
 
 .forgot-password {
-    color: #2b6e4d;
+    color: #00457c;
     text-decoration: none;
     font-size: 0.9rem;
 }
@@ -128,18 +133,18 @@ button:hover {
 }
 
 .auth-link a {
-    color: #2b6e4d;
+    color: #00457c;
     text-decoration: none;
 }
 
 /* Estilos de la Navbar */
 .main-nav {
-    background-color: #2b6e4d;
-    padding: 1rem 0;
+    background-color: #003e77;
+    padding: 2rem 0;
     position: fixed;
     width: 100%;
     top: 0;
-    left: 0; 
+    left: 0;
     z-index: 1000;
     box-sizing: border-box;
 }
@@ -152,14 +157,22 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    align-items: center;
+    height: 100%;
 }
 .nav-brand {
-    color: white !important;
-    text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    height: 50px; /* Altura fija para la navbar */
 }
-
+.nav-brand img {
+    height: 100px; /* Altura del logo */
+    width: auto;
+    transition: transform 0.3s ease;
+}
+.nav-brand img:hover {
+    transform: scale(1.05);
+}
 .nav-links {
     display: flex;
     gap: 2rem;
@@ -175,37 +188,155 @@ button:hover {
     color: white;
 }
 
+.voting-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 5% auto;
+}
 
-body {
-    padding-top: 70px;
+.options-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.vote-option {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  text-align: left;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.vote-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  background: #bfdfff;
+}
+.vote-option img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #00467e;
+}
+
+.candidate-info {
+  flex: 1;
+}
+.candidate-info h4 {
+  margin: 0;
+  color: #00467e;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.candidate-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.blank-vote-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #f0f2f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  border: 3px dashed #00467e;
+}
+.results-container {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+}
+
+.result-bar {
+    height: 20px;
+    background-color: #00467e;
+    margin: 10px 0;
+    border-radius: 3px;
+    transition: width 0.5s ease-in-out;
+}
+
+.selected {
+    background-color: #68bbff !important;
+}
+.modal {
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    font-family: "Noto Sans", sans-serif;
+}
+
+#close-modal {
+    margin-top: 20px;
+    padding: 10px 25px;
+    background-color: #00467e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
 }
 /* Media Queries para Tablet (601px - 768px) */
 @media (max-width: 768px) {
-
     body {
         padding-top: 60px;
     }
-    
 
     .nav-container {
         padding: 0 1.5rem;
     }
-    
+
     .nav-links {
         gap: 1.5rem;
     }
-    
+
     .nav-brand {
         font-size: 1.3rem;
     }
-    
 
     .registration-container,
     .auth-container {
         padding: 1.5rem;
         margin: 0 1rem;
     }
-    
 
     .form-options {
         flex-direction: column;
@@ -214,27 +345,24 @@ body {
     }
 }
 
-
 @media (max-width: 600px) {
-
     .nav-container {
         padding: 0 1rem;
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
     }
-    
+
     .nav-links {
         flex-direction: column;
         gap: 1rem;
         width: 100%;
-        display: none; 
+        display: none;
     }
-    
+
     .nav-brand {
         font-size: 1.2rem;
     }
-    
 
     .registration-container,
     .auth-container {
@@ -242,54 +370,92 @@ body {
         margin: 0 0.5rem;
         border-radius: 8px;
     }
-    
+
     h2 {
         font-size: 1.3rem;
         margin-bottom: 1rem;
     }
-    
 
     input {
         padding: 0.7rem;
     }
-    
+
     button {
         padding: 0.8rem;
         font-size: 0.9rem;
     }
-    
 
     .form-options {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
+
     .remember-me {
         font-size: 0.8rem;
     }
-    
+
     .forgot-password {
         font-size: 0.8rem;
     }
 }
 
-
-    @media (max-width: 480px) {
-
-        .registration-container,
-        .auth-container {
-            padding: 0.8rem;
-        }
-        
-        .nav-brand {
-            font-size: 1.1rem;
-        }
-        
-        button {
-            font-size: 0.85rem;
-        }
-        
-        .auth-link {
-            font-size: 0.9rem;
-        }
+@media (max-width: 480px) {
+    .registration-container,
+    .auth-container {
+        padding: 0.8rem;
     }
+
+    .nav-brand {
+        font-size: 1.1rem;
+    }
+
+    button {
+        font-size: 0.85rem;
+    }
+
+    .auth-link {
+        font-size: 0.9rem;
+    }
+}
+/* Mejoras responsive */
+@media (max-width: 768px) {
+  .vote-option {
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .vote-option img {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .candidate-info h4 {
+    font-size: 1.1rem;
+  }
+  
+  .candidate-info p {
+    font-size: 0.85rem;
+  }
+  
+  .blank-vote-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .vote-option {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .vote-option img {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .candidate-info {
+    width: 100%;
+  }
+}
