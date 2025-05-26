@@ -21,6 +21,12 @@
     "cors": "^2.8.5",
     "dotenv": "16.5.0",
     "express": "5.1.0",
-    "pg": "^8.15.6"
+    "pg": "^8.15.6",
+    "@grpc/grpc-js": "^1.12.2",
+    "@hyperledger/fabric-gateway": "^1.7.0",
+    "fabric-contract-api": "~2.5",
+    "fabric-shim": "~2.5",
+    "json-stringify-deterministic": "^1.0.0",
+    "sort-keys-recursive": "^2.1.0"
   }
 }
