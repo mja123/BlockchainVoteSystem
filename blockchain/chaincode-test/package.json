@@ -14,8 +14,10 @@
     "author": "Hyperledger",
     "license": "Apache-2.0",
     "dependencies": {
-        "@grpc/grpc-js": "^1.12.2",
-        "@hyperledger/fabric-gateway": "^1.7.0"
+        "fabric-contract-api": "~2.5",
+        "fabric-shim": "~2.5",
+        "json-stringify-deterministic": "^1.0.0",
+        "sort-keys-recursive": "^2.1.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.5.0",

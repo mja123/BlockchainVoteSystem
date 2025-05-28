@@ -1,4 +1,5 @@
 import { getConnection } from '../utils/dbConnection.js';
+import { getContract } from '../utils/blockchainConnection.js';
 
 export default class VoteService {
     constructor() {
@@ -7,24 +8,14 @@ export default class VoteService {
 
     // Agrega un voto a la base de datos
     async addVote(voteData) {
-        const { userId, candidate, voteHash } = voteData;
-        const query = `
-            INSERT INTO vote_schema.votes (user_id, candidate)
-            VALUES ($1, $2)
-            RETURNING *;
-        `;
-        const values = [userId, candidate];
-        const result = await this.pool.query(query, values);
-
-        // Opcional: actualizar el hash del voto en la tabla de usuarios
-        if (voteHash) {
-            await this.pool.query(
-                'UPDATE vote_schema.users SET vote_hash = $1 WHERE id = $2',
-                [voteHash, userId]
-            );
+        console.log("Adding vote: ", voteData);
+        const { userId, candidate } = voteData;
+        try {
+            const contract = await getContract();
+            await contract.submitTransaction('createVote', 1, userId, candidate);
+        } catch (error) {
+            console.error("Error adding vote: ", error)
         }
-
-        return result.rows[0];
     }
 
     // Obtiene todos los votos

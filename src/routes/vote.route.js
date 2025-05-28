@@ -29,6 +29,7 @@ router.get("/:userId", async (req, res) => {
 router.post("/", async (req, res) => {
     const voteData = req.body;
     try {
+        console.log("Received vote data: ", voteData);
         const userVote = await controller.addVote(voteData);
         res.json({ vote: userVote });
     } catch (error) {

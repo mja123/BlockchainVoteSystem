@@ -7,6 +7,7 @@ export default class VoteController {
 
     async addVote(voteData) {
         try {
+            console.log("Adding vote controller: ", voteData); 
             const newVote = await this.voteService.addVote(voteData); // Añadir 'const'
             return newVote;
         } catch (error) {
