@@ -1,62 +1,55 @@
-const { Wallets } = require('fabric-network');
-const FabricCAServices = require('fabric-ca-client');
-const path = require('path');
-const { buildCAClient, registerAndEnrollUser, enrollAdmin } = require('./CAUtil.js');
-const { buildCCPOrg1, buildWallet } = require('./AppUtil.js');
+/*
+ * ES Module version of user enrollment script
+ * Transforms require() to import and adds __dirname shim
+ */
+import { Wallets } from 'fabric-network';
+import FabricCAServices from 'fabric-ca-client';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { buildCAClient, registerAndEnrollUser, enrollAdmin } from './CAUtil.js';
+import { buildCCPOrg1, buildWallet } from './AppUtil.js';
+
+// Shim __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const mspOrg1 = 'Org1MSP';
-
 const walletPath = path.join(__dirname, '../wallet');
 const userId = 'appUser';
 
-
+/**
+ * Enrolls the admin and registers/enrolls the application user
+ */
 export async function enrollUser() {
-    try {
-        // build an in memory object with the network configuration (also known as a connection profile)
-        const ccp = buildCCPOrg1();
+  try {
+    // 1. Load the network connection profile
+    const ccp = buildCCPOrg1();
 
-        // build an instance of the fabric ca services client based on
-        // the information in the network configuration
-        const caClient = buildCAClient(FabricCAServices, ccp, 'ca.org1.example.com');
+    // 2. Build the CA client for Org1
+    const caClient = buildCAClient(
+      FabricCAServices,
+      ccp,
+      'ca.org1.example.com'
+    );
 
-        // setup the wallet to hold the credentials of the application user
-        const wallet = await buildWallet(Wallets, walletPath);
+    // 3. Set up the wallet for identity management
+    const wallet = await buildWallet(Wallets, walletPath);
 
-        // in a real application this would be done on an administrative flow, and only once
-        await enrollAdmin(caClient, wallet, mspOrg1);
+    // 4. Enroll the admin user (if not already enrolled)
+    await enrollAdmin(caClient, wallet, mspOrg1);
 
-        // in a real application this would be done only when a new user was required to be added
-        // and would be part of an administrative flow
-        await registerAndEnrollUser(caClient, wallet, mspOrg1, userId, 'org1.department1');
+    // 5. Register and enroll the application user
+    await registerAndEnrollUser(
+      caClient,
+      wallet,
+      mspOrg1,
+      userId,
+      'org1.department1'
+    );
 
-        // Create a new gateway instance for interacting with the fabric network.
-        // In a real application this would be done as the backend server session is setup for
-        // a user that has been verified.
-    //     const gateway = new Gateway();
-
-    //     try {
-    //         // setup the gateway instance
-    //         // The user will now be able to create connections to the fabric network and be able to
-    //         // submit transactions and query. All transactions submitted by this gateway will be
-    //         // signed by this user using the credentials stored in the wallet.
-    //         await gateway.connect(ccp, {
-    //             wallet,
-    //             identity: userId,
-    //             discovery: { enabled: true, asLocalhost: true } // using asLocalhost as this gateway is using a fabric network deployed locally
-    //         });
-
-    //         // Build a network instance based on the channel where the smart contract is deployed
-    //         const network = await gateway.getNetwork(channelName);
-
-    //         // Get the contract from the network.
-    //         const contract = network.getContract(chaincodeName);
-    //     catch (error) {
-    //         console.error(`Failed to submit transaction: ${error}`);
-    //     } finally {
-    //         // Disconnect from the gateway when done.
-    //         await gateway.disconnect();
-    //     }
-    } catch (error) {
-        console.error(`Failed to enroll user: ${error}`);
-    }
+    console.log('✅ Successfully enrolled user and admin identities');
+  } catch (error) {
+    console.error(`❌ Failed to enroll user: ${error}`);
+    throw error;
+  }
 }

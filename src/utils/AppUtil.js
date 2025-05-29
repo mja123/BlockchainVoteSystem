@@ -4,63 +4,87 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-'use strict';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const fs = require('fs');
-const path = require('path');
+// Derive __filename and __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-exports.buildCCPOrg1 = () => {
-	// load the common connection configuration file
-	const ccpPath = path.resolve(__dirname, '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
-	const fileExists = fs.existsSync(ccpPath);
-	if (!fileExists) {
-		throw new Error(`no such file or directory: ${ccpPath}`);
-	}
-	const contents = fs.readFileSync(ccpPath, 'utf8');
+/**
+ * Load the connection profile for Org1
+ */
+export function buildCCPOrg1() {
+  const ccpPath = path.resolve(
+    __dirname,
+    '..',
+	'..',
+	'blockchain',
+    'test-network',
+    'organizations',
+    'peerOrganizations',
+    'org1.example.com',
+    'connection-org1.json'
+  );
+  if (!fs.existsSync(ccpPath)) {
+    throw new Error(`no such file or directory: ${ccpPath}`);
+  }
+  const contents = fs.readFileSync(ccpPath, 'utf8');
+  const ccp = JSON.parse(contents);
+  console.log(`Loaded the network configuration located at ${ccpPath}`);
+  return ccp;
+}
 
-	// build a JSON object from the file contents
-	const ccp = JSON.parse(contents);
+/**
+ * Load the connection profile for Org2
+ */
+export function buildCCPOrg2() {
+  const ccpPath = path.resolve(
+    __dirname,
+    '..',
+	'..',
+	'blockchain',
+    'test-network',
+    'organizations',
+    'peerOrganizations',
+    'org2.example.com',
+    'connection-org2.json'
+  );
+  if (!fs.existsSync(ccpPath)) {
+    throw new Error(`no such file or directory: ${ccpPath}`);
+  }
+  const contents = fs.readFileSync(ccpPath, 'utf8');
+  const ccp = JSON.parse(contents);
+  console.log(`Loaded the network configuration located at ${ccpPath}`);
+  return ccp;
+}
 
-	console.log(`Loaded the network configuration located at ${ccpPath}`);
-	return ccp;
-};
+/**
+ * Create a new wallet for identities, either file system or in-memory
+ * @param {import('fabric-network').Wallets} Wallets - Wallets API from fabric-network
+ * @param {string} [walletPath] - Optional path to file system wallet
+ */
+export async function buildWallet(Wallets, walletPath) {
+  let wallet;
+  if (walletPath) {
+    wallet = await Wallets.newFileSystemWallet(walletPath);
+    console.log(`Built a file system wallet at ${walletPath}`);
+  } else {
+    wallet = await Wallets.newInMemoryWallet();
+    console.log('Built an in memory wallet');
+  }
+  return wallet;
+}
 
-exports.buildCCPOrg2 = () => {
-	// load the common connection configuration file
-	const ccpPath = path.resolve(__dirname, '..', 'test-network',
-		'organizations', 'peerOrganizations', 'org2.example.com', 'connection-org2.json');
-	const fileExists = fs.existsSync(ccpPath);
-	if (!fileExists) {
-		throw new Error(`no such file or directory: ${ccpPath}`);
-	}
-	const contents = fs.readFileSync(ccpPath, 'utf8');
-
-	// build a JSON object from the file contents
-	const ccp = JSON.parse(contents);
-
-	console.log(`Loaded the network configuration located at ${ccpPath}`);
-	return ccp;
-};
-
-exports.buildWallet = async (Wallets, walletPath) => {
-	// Create a new  wallet : Note that wallet is for managing identities.
-	let wallet;
-	if (walletPath) {
-		wallet = await Wallets.newFileSystemWallet(walletPath);
-		console.log(`Built a file system wallet at ${walletPath}`);
-	} else {
-		wallet = await Wallets.newInMemoryWallet();
-		console.log('Built an in memory wallet');
-	}
-
-	return wallet;
-};
-
-exports.prettyJSONString = (inputString) => {
-	if (inputString) {
-		 return JSON.stringify(JSON.parse(inputString), null, 2);
-	}
-	else {
-		 return inputString;
-	}
+/**
+ * Pretty-print a JSON string
+ * @param {string} inputString - Raw JSON string
+ * @returns {string} Pretty-printed JSON
+ */
+export function prettyJSONString(inputString) {
+  if (inputString) {
+    return JSON.stringify(JSON.parse(inputString), null, 2);
+  }
+  return inputString;
 }
