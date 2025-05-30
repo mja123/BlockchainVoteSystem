@@ -9,12 +9,12 @@ class VoteContract extends Contract {
   }
 
   // Create a new vote record
-  async CreateVote(ctx, voteId, candidate) {
+  async CreateVote(ctx, id, voteId, candidate, time) {
     const exists = await ctx.stub.getState(voteId);
     if (exists && exists.length > 0) {
       throw new Error(`Vote ${voteId} already exists`);
     }
-    const vote = { ID: voteId, Candidate: candidate, Timestamp: new Date().toISOString() };
+    const vote = { ID: id, voteId, Candidate: candidate, Timestamp: time };
     await ctx.stub.putState(voteId, Buffer.from(JSON.stringify(vote)));
     return JSON.stringify(vote);
   }

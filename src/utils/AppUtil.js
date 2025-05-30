@@ -19,8 +19,8 @@ export function buildCCPOrg1() {
   const ccpPath = path.resolve(
     __dirname,
     '..',
-	'..',
-	'blockchain',
+    '..',
+    'blockchain',
     'test-network',
     'organizations',
     'peerOrganizations',
@@ -43,8 +43,8 @@ export function buildCCPOrg2() {
   const ccpPath = path.resolve(
     __dirname,
     '..',
-	'..',
-	'blockchain',
+    '..',
+    'blockchain',
     'test-network',
     'organizations',
     'peerOrganizations',

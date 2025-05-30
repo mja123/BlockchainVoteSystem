@@ -10,9 +10,10 @@ export default class VoteService {
     async addVote(voteData) {
         console.log("Adding vote: ", voteData);
         const { userId, candidate } = voteData;
+        console.log(process.env.FABRIC_CFG_PATH)
         try {
             const contract = await getContract();
-            await contract.submitTransaction('createVote', 1, userId, candidate);
+            return await contract.submitTransaction('CreateVote', 1, userId, candidate, Date.now().toString());
         } catch (error) {
             console.error("Error adding vote: ", error)
         }
