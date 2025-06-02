@@ -8,7 +8,7 @@ export default class VoteController {
     async addVote(voteData) {
         try {
             console.log("Adding vote controller: ", voteData); 
-            const newVote = await this.voteService.addVote(voteData); // Añadir 'const'
+            const newVote = await this.voteService.addVote(voteData);
             return newVote;
         } catch (error) {
             throw new Error(`Error adding vote: ${error.message}`);
@@ -17,7 +17,7 @@ export default class VoteController {
 
     async getAllVotes() {
         try {
-            const votes = await this.voteService.getAllVotes(); // Añadir 'const'
+            const votes = await this.voteService.getAllVotes();
             return votes;
         } catch (error) {
             throw new Error(`Error retrieving votes: ${error.message}`);

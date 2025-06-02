@@ -13,7 +13,8 @@ export default class VoteService {
         console.log(process.env.FABRIC_CFG_PATH)
         try {
             const contract = await getContract();
-            return await contract.submitTransaction('CreateVote', 1, userId, candidate, Date.now().toString());
+            const newVote = await contract.submitTransaction('CreateVote', 1, userId, candidate, Date.now().toString());
+            return JSON.parse(newVote.toString('utf8'));
         } catch (error) {
             console.error("Error adding vote: ", error)
         }
@@ -21,8 +22,14 @@ export default class VoteService {
 
     // Obtiene todos los votos
     async getAllVotes() {
-        const result = await this.pool.query('SELECT * FROM vote_schema.votes');
-        return result.rows;
+        console.log("Fetching all votes");
+        try {
+            const contract = await getContract();
+            const allVotes = await contract.submitTransaction('GetAllVotes');
+            return JSON.parse(allVotes.toString('utf8'));
+        } catch (error) {
+            console.error("Error adding vote: ", error)
+        }
     }
 
     // Obtiene el voto de un usuario específico

@@ -25,7 +25,10 @@ const raw = fs.readFileSync(ccpPath, 'utf8');
 const ccp = JSON.parse(raw);
 
 // Enroll or register the user before using the contract
-await enrollUser();
+if (!fs.existsSync(path.resolve(__dirname, '../wallet'))) {
+  console.log('Enrolling user...');
+  await enrollUser();
+}
 
 /**
  * Returns a Fabric contract instance for submitting transactions
