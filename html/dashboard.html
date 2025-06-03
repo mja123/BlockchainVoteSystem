@@ -16,7 +16,6 @@
   <body>
     <div id="navbar-container"></div>
 
-    <!-- Modal de bienvenida -->
     <div id="welcome-modal" class="modal">
       <div class="modal-content">
         <h2>Bienvenido a VoteChain</h2>
@@ -33,96 +32,218 @@
       </div>
     </div>
 
-<div class="voting-container">
-  <h1>VoteChain - Elecciones ONG</h1>
-  <h3>Selecciona a tu candidato para la presidencia de la organización:</h3>
-  <div class="options-container">
-<button class="vote-option" data-option="candidato1">
-  <div class="button-content"> <!-- Contenedor adicional -->
-    <img src="../assets/adorni.png" alt="Manuel Adorni">
-    <div class="candidate-info">
-      <h4>Manuel Adorni</h4>
-      <p>Propuesta: Transparencia y sostenibilidad</p>
-    </div>
-  </div>
-</button>
-<button class="vote-option" data-option="candidato1">
-  <div class="button-content"> <!-- Contenedor adicional -->
-    <img src="../assets/larreta.jpg" alt="Horacio Larreta">
-    <div class="candidate-info">
-      <h4>Horacio Larreta</h4>
-      <p>Propuesta: Educacion Publica</p>
-    </div>
-  </div>
-</button>
-    
-    <button class="vote-option" data-option="blanco">
-      <div class="blank-vote-icon">✉️</div>
-      <div class="candidate-info">
-        <h4>Voto en blanco</h4>
-        <p>No apoyar a ningún candidato</p>
+    <div class="voting-container">
+      <h1>VoteChain - Elecciones ONG</h1>
+      <h3>Selecciona a tu candidato para la presidencia de la organización:</h3>
+      <div class="options-container">
+        <button class="vote-option" data-option="Adorni">
+          <div class="button-content">
+            <img src="../assets/adorni.png" alt="Manuel Adorni" />
+            <div class="candidate-info">
+              <h4>Manuel Adorni</h4>
+              <p>Propuesta: Transparencia y sostenibilidad</p>
+            </div>
+          </div>
+        </button>
+        <button class="vote-option" data-option="Larreta">
+          <div class="button-content">
+            <img src="../assets/larreta.jpg" alt="Horacio Larreta" />
+            <div class="candidate-info">
+              <h4>Horacio Larreta</h4>
+              <p>Propuesta: Educacion Publica</p>
+            </div>
+          </div>
+        </button>
+        <button class="vote-option" data-option="Blanco">
+          <div class="blank-vote-icon">✉️</div>
+          <div class="candidate-info">
+            <h4>Voto en blanco</h4>
+            <p>No apoyar a ningún candidato</p>
+          </div>
+        </button>
       </div>
-    </button>
-  </div>
 
-  <div class="results-container">
-    <h2>Resultados de la votación:</h2>
-    <div id="results"></div>
-  </div>
-</div>
-
+      <div class="results-container">
+        <h2>Resultados de la votación:</h2>
+        <div id="results"></div>
+      </div>
+    </div>
     <script>
-      // Configuración inicial
-      let votes = {
-        Adorni: 0,
-        Larreta: 0,
-        Blanco: 0
-      };
+      // Función para obtener el userId del usuario autenticado
+      function getUserId() {
+        // En un sistema real esto vendría de la sesión o localStorage
+        // Ejemplo: return localStorage.getItem('userId');
+        return "user_" + Math.random().toString(36).substr(2, 9); // ID temporal
+      }
 
-      // Cargar votos previos
-      if (localStorage.getItem("votes")) {
-        votes = JSON.parse(localStorage.getItem("votes"));
+      // Función para enviar el voto al backend
+      async function sendVoteToBackend(userId, candidate) {
+        try {
+          const response = await fetch("/api/votes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: userId,
+              candidate: candidate,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Error al registrar el voto");
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("Error:", error);
+          throw error;
+        }
+      }
+
+      // Función para obtener resultados del backend
+      async function fetchResults() {
+        try {
+          const response = await fetch("/api/votes");
+          if (!response.ok) throw new Error("Error al obtener resultados");
+          const data = await response.json();
+          return data.votes;
+        } catch (error) {
+          console.error("Error:", error);
+          return [];
+        }
       }
 
       // Función para actualizar resultados
-      function updateResults() {
-        const totalVotes = Object.values(votes).reduce((a, b) => a + b, 0);
-        const resultsDiv = document.getElementById("results");
-        resultsDiv.innerHTML = "";
+      async function updateResults() {
+        try {
+          const votes = await fetchResults();
+          const resultsDiv = document.getElementById("results");
+          resultsDiv.innerHTML = "";
 
-        for (const [candidate, count] of Object.entries(votes)) {
-          const percentage = totalVotes > 0 
-            ? ((count / totalVotes) * 100).toFixed(1)
-            : 0;
+          // Contar votos por candidato
+          const voteCounts = {
+            Adorni: 0,
+            Larreta: 0,
+            Blanco: 0,
+          };
 
-          resultsDiv.innerHTML += `
-            <div class="result-item">
-              <span class="candidate-name">${candidate}</span>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: ${percentage}%"></div>
+          votes.forEach((vote) => {
+            if (vote.candidate in voteCounts) {
+              voteCounts[vote.candidate] += 1;
+            }
+          });
+
+          const totalVotes = votes.length;
+
+          for (const [candidate, count] of Object.entries(voteCounts)) {
+            const percentage =
+              totalVotes > 0 ? ((count / totalVotes) * 100).toFixed(1) : 0;
+
+            resultsDiv.innerHTML += `
+              <div class="result-item">
+                <span class="candidate-name">${candidate}</span>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${percentage}%"></div>
+                </div>
+                <span class="vote-count">${count} votos (${percentage}%)</span>
               </div>
-              <span class="vote-count">${count} votos (${percentage}%)</span>
-            </div>
-          `;
+            `;
+          }
+        } catch (error) {
+          console.error("Error actualizando resultados:", error);
+          resultsDiv.innerHTML = `<p class="error">Error cargando resultados: ${error.message}</p>`;
         }
       }
 
       // Event listeners para los botones
       document.querySelectorAll(".vote-option").forEach((button) => {
-        button.addEventListener("click", (event) => {
+        button.addEventListener("click", async (event) => {
           const selectedButton = event.currentTarget;
-          const option = selectedButton.dataset.option;
-          
-          // Remover selección previa
-          document.querySelectorAll(".vote-option").forEach(btn => {
-            btn.classList.remove('selected');
-          });
-          selectedButton.classList.add('selected');
+          const candidate = selectedButton.dataset.option;
 
-          if (confirm(`¿Confirmas tu voto para ${option}?`)) {
-            votes[option]++;
-            localStorage.setItem("votes", JSON.stringify(votes));
-            updateResults();
+          // Remover selección previa
+          document.querySelectorAll(".vote-option").forEach((btn) => {
+            btn.classList.remove("selected");
+          });
+          selectedButton.classList.add("selected");
+
+          if (confirm(`¿Confirmas tu voto para ${candidate}?`)) {
+            try {
+              // Mostrar estado de carga
+              selectedButton.innerHTML =
+                '<div class="loader"></div> Enviando voto...';
+              selectedButton.disabled = true;
+
+              // Obtener userId
+              const userId = getUserId();
+
+              // Enviar voto al backend
+              await sendVoteToBackend(userId, candidate);
+
+              // Actualizar resultados
+              await updateResults();
+
+              // Restaurar botón
+              selectedButton.innerHTML = `
+                <div class="button-content">
+                  ${
+                    candidate !== "Blanco"
+                      ? `<img src="../assets/${candidate.toLowerCase()}.jpg" alt="${candidate}">`
+                      : '<div class="blank-vote-icon">✉️</div>'
+                  }
+                  <div class="candidate-info">
+                    <h4>${
+                      candidate === "Adorni"
+                        ? "Manuel Adorni"
+                        : candidate === "Larreta"
+                        ? "Horacio Larreta"
+                        : "Voto en blanco"
+                    }</h4>
+                    <p>${
+                      candidate === "Blanco"
+                        ? "No apoyar a ningún candidato"
+                        : "Voto registrado"
+                    }</p>
+                  </div>
+                </div>
+              `;
+              selectedButton.disabled = false;
+
+              alert("¡Voto registrado correctamente!");
+            } catch (error) {
+              alert(`Error: ${error.message}`);
+
+              // Restaurar botón en caso de error
+              selectedButton.innerHTML = `
+                <div class="button-content">
+                  ${
+                    candidate !== "Blanco"
+                      ? `<img src="../assets/${candidate.toLowerCase()}.jpg" alt="${candidate}">`
+                      : '<div class="blank-vote-icon">✉️</div>'
+                  }
+                  <div class="candidate-info">
+                    <h4>${
+                      candidate === "Adorni"
+                        ? "Manuel Adorni"
+                        : candidate === "Larreta"
+                        ? "Horacio Larreta"
+                        : "Voto en blanco"
+                    }</h4>
+                    <p>${
+                      candidate === "Blanco"
+                        ? "No apoyar a ningún candidato"
+                        : "Propuesta..."
+                    }</p>
+                  </div>
+                </div>
+              `;
+              selectedButton.disabled = false;
+              selectedButton.classList.remove("selected");
+            }
+          } else {
+            selectedButton.classList.remove("selected");
           }
         });
       });
@@ -135,7 +256,7 @@
         });
 
       // Mostrar modal al cargar
-      window.addEventListener("DOMContentLoaded", () => {
+      window.addEventListener("DOMContentLoaded", async () => {
         const modal = document.getElementById("welcome-modal");
         const closeBtn = document.getElementById("close-modal");
 
@@ -144,8 +265,12 @@
         closeBtn.addEventListener("click", () => {
           modal.style.display = "none";
         });
-        // Mostrar resultados iniciales
-        updateResults();
+
+        // Cargar resultados iniciales
+        await updateResults();
+
+        // Actualizar resultados cada 30 segundos
+        setInterval(updateResults, 30000);
       });
     </script>
   </body>

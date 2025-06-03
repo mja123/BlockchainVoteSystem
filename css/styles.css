@@ -204,70 +204,70 @@ button:hover {
 }
 
 .vote-option {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  text-align: left;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    text-align: left;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
     cursor: pointer; /* Asegurar cursor en todo el botón */
-  position: relative; /* Necesario para el pseudo-elemento */
+    position: relative; /* Necesario para el pseudo-elemento */
 }
 .vote-option > * {
-  pointer-events: none;
+    pointer-events: none;
 }
 .vote-option:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  background: #bfdfff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    background: #bfdfff;
 }
 .vote-option:hover:not(:disabled) {
-  background: #bfdfff !important;
+    background: #bfdfff !important;
 }
 .vote-option img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #00467e;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #00467e;
 }
 
 .candidate-info {
-  flex: 1;
+    flex: 1;
 }
 .candidate-info h4 {
-  margin: 0;
-  color: #00467e;
-  font-size: 1.2rem;
-  margin-bottom: 8px;
-  cursor: default;
-  pointer-events: none; 
+    margin: 0;
+    color: #00467e;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    cursor: default;
+    pointer-events: none;
 }
 
 .candidate-info p {
-  margin: 0;
-  color: #666;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  cursor: default;
-  pointer-events: none;
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    cursor: default;
+    pointer-events: none;
 }
 .blank-vote-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #f0f2f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  border: 3px dashed #00467e;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #f0f2f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    border: 3px dashed #00467e;
 }
 .results-container {
     margin-top: 30px;
@@ -322,6 +322,31 @@ button:hover {
     border-radius: 6px;
     font-size: 1em;
     cursor: pointer;
+}
+/* Estilos para el loader */
+.loader {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.error {
+    color: #e74c3c;
+    font-weight: bold;
 }
 /* Media Queries para Tablet (601px - 768px) */
 @media (max-width: 768px) {
@@ -428,43 +453,43 @@ button:hover {
 }
 /* Mejoras responsive */
 @media (max-width: 768px) {
-  .vote-option {
-    padding: 15px;
-    gap: 15px;
-  }
-  
-  .vote-option img {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .candidate-info h4 {
-    font-size: 1.1rem;
-  }
-  
-  .candidate-info p {
-    font-size: 0.85rem;
-  }
-  
-  .blank-vote-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
+    .vote-option {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .vote-option img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .candidate-info h4 {
+        font-size: 1.1rem;
+    }
+
+    .candidate-info p {
+        font-size: 0.85rem;
+    }
+
+    .blank-vote-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 480px) {
-  .vote-option {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .vote-option img {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .candidate-info {
-    width: 100%;
-  }
+    .vote-option {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .vote-option img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .candidate-info {
+        width: 100%;
+    }
 }
