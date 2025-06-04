@@ -6,12 +6,12 @@ const controller = new VoteController();
 
 router.get("/", async (req, res) => {
     try {
-        votes = await controller.getAllVotes()
-        res.json({ votes })
+        const votes = await controller.getAllVotes();
+        res.json({ votes });
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }
-})
+});
 
 router.get("/:userId", async (req, res) => {
     const { userId } = req.params;
@@ -19,22 +19,22 @@ router.get("/:userId", async (req, res) => {
         return res.status(400).json({ error: "userId is required" });
     }
     try {
-        const userVote = await controller.getVote(userId)
+        const userVote = await controller.getVote(userId);
+        res.json({ vote: userVote });
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }
-    res.json({ vote: userVote })
-})
+});
 
 router.post("/", async (req, res) => {
     const voteData = req.body;
-
     try {
-        userVote = await controller.addVote(voteData)
+        console.log("Received vote data: ", voteData);
+        const userVote = await controller.addVote(voteData);
+        res.json({ vote: userVote });
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }
-    res.json({ vote: userVote })
-})
+});
 
 export default router;

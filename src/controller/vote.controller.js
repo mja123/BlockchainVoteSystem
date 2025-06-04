@@ -7,25 +7,27 @@ export default class VoteController {
 
     async addVote(voteData) {
         try {
-            newVote = await this.voteService.addVote(voteData);
+            console.log("Adding vote controller: ", voteData); 
+            const newVote = await this.voteService.addVote(voteData);
+            return newVote;
         } catch (error) {
             throw new Error(`Error adding vote: ${error.message}`);
         }
-        return newVote;
     }
 
     async getAllVotes() {
         try {
-            votes = await this.voteService.getAllVotes();
+            const votes = await this.voteService.getAllVotes();
+            return votes;
         } catch (error) {
             throw new Error(`Error retrieving votes: ${error.message}`);
         }
-        return votes;
     }
 
     async getVote(userId) {
         try {
-            userVote = await this.voteService.addVote(voteData);
+            const userVote = await this.voteService.getVote(userId);
+            return userVote;
         } catch (error) {
             throw new Error(`Error getting vote from user ${userId}: ${error.message}`);
         }
