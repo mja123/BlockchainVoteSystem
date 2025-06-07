@@ -1,4 +1,5 @@
 import VoteService from '../service/vote.service.js';
+import UserController from './user.controller.js';
 
 export default class VoteController {
     constructor() {
@@ -8,9 +9,20 @@ export default class VoteController {
     async addVote(voteData) {
         try {
             console.log("Adding vote controller: ", voteData); 
+            const userController = new UserController();
+            
+            const userAlreadyVoted = await userController.userAlreadyVoted(voteData.email)
+            console.log("User already voted: ", userAlreadyVoted);
+            if (userAlreadyVoted) throw new Error("User already voted");                
             const newVote = await this.voteService.addVote(voteData);
+            if (!newVote) {
+                throw new Error("Vote not added");
+            }
+            userController.addUserVote(voteData.email, newVote.voteId);
+            console.log("New vote added: ", newVote, " to user: ", voteData.email);
             return newVote;
         } catch (error) {
+            console.error("Error in addVote controller: ", error);
             throw new Error(`Error adding vote: ${error.message}`);
         }
     }
@@ -21,15 +33,6 @@ export default class VoteController {
             return votes;
         } catch (error) {
             throw new Error(`Error retrieving votes: ${error.message}`);
-        }
-    }
-
-    async getVote(userId) {
-        try {
-            const userVote = await this.voteService.getVote(userId);
-            return userVote;
-        } catch (error) {
-            throw new Error(`Error getting vote from user ${userId}: ${error.message}`);
         }
     }
 }

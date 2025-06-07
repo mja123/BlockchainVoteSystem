@@ -11,7 +11,7 @@ router.post("/register", async (req, res) => {
         const { name, email, password } = req.body;
         const newUser = new User(name, email, password);
         const userAdded = await controller.addUser(newUser) 
-        res.json({ message: `${userAdded} user added successfully.`})
+        res.status(201).json({ message: `${userAdded} user added successfully.`})
     } catch (error) {
         console.log(error)
         return res.status(400).json({ error: error.message });
@@ -23,7 +23,7 @@ router.post("/login", async (req, res) => {
     
     try {
         const user = await controller.authenticate(userData) 
-        res.json({ user })
+        res.status(200).json({ user })
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }

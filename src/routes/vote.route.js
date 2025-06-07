@@ -7,20 +7,7 @@ const controller = new VoteController();
 router.get("/", async (req, res) => {
     try {
         const votes = await controller.getAllVotes();
-        res.json({ votes });
-    } catch (error) {
-        return res.status(400).json({ error: error.message });
-    }
-});
-
-router.get("/:userId", async (req, res) => {
-    const { userId } = req.params;
-    if (!userId) {
-        return res.status(400).json({ error: "userId is required" });
-    }
-    try {
-        const userVote = await controller.getVote(userId);
-        res.json({ vote: userVote });
+        res.status(200).json({ votes });
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }
@@ -31,7 +18,7 @@ router.post("/", async (req, res) => {
     try {
         console.log("Received vote data: ", voteData);
         const userVote = await controller.addVote(voteData);
-        res.json({ vote: userVote });
+        res.status(201).json({ vote: userVote });
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }
