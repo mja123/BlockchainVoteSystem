@@ -6,6 +6,7 @@ const controller = new VoteController();
 
 router.get("/", async (req, res) => {
     try {
+        console.log("Retrieving all votes");
         const votes = await controller.getAllVotes();
         res.status(200).json({ votes });
     } catch (error) {
@@ -20,6 +21,8 @@ router.post("/", async (req, res) => {
         const userVote = await controller.addVote(voteData);
         res.status(201).json({ vote: userVote });
     } catch (error) {
+        if (error.message.includes("User already voted"))
+            return res.status(409).json({ error: "User already voted" });
         return res.status(400).json({ error: error.message });
     }
 });

@@ -1,0 +1,189 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VoteChain - Dashboard</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+  <script>
+    // Bloquear acceso sin login
+    const email = localStorage.getItem("email");
+    if (!email) {
+      alert("Debes iniciar sesión para acceder al dashboard.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <div id="navbar-container"></div>
+
+  <!-- Modal de bienvenida -->
+  <div id="welcome-modal" class="modal">
+    <div class="modal-content">
+      <h2>Bienvenido a VoteChain</h2>
+      <p style="text-align: center; max-width: 600px; margin: auto">
+        Bienvenido a <strong>VoteChain</strong>, el sistema de votación digital basado en blockchain para garantizar transparencia, seguridad y confianza en las elecciones internas de nuestra ONG.
+      </p>
+      <p style="font-size: 0.9em; color: #666; margin-top: 20px">
+        Todos los votos están asegurados mediante tecnología blockchain y son totalmente anónimos.
+      </p>
+      <button id="close-modal">Aceptar</button>
+    </div>
+  </div>
+
+  <div class="voting-container">
+    <h1>VoteChain - Elecciones ONG</h1>
+    <h3>Selecciona a tu candidato para la presidencia de la organización:</h3>
+
+    <div class="options-container">
+      <button class="vote-option" data-option="Adorni">
+        <div class="button-content">
+          <img src="../assets/adorni.png" alt="Manuel Adorni" />
+          <div class="candidate-info">
+            <h4>Manuel Adorni</h4>
+            <p>Propuesta: Transparencia y sostenibilidad</p>
+          </div>
+        </div>
+      </button>
+
+      <button class="vote-option" data-option="Larreta">
+        <div class="button-content">
+          <img src="../assets/larreta.jpg" alt="Horacio Larreta" />
+          <div class="candidate-info">
+            <h4>Horacio Larreta</h4>
+            <p>Propuesta: Educación Pública</p>
+          </div>
+        </div>
+      </button>
+
+      <button class="vote-option" data-option="Blanco">
+        <div class="button-content">
+          <div class="blank-vote-icon">✉️</div>
+          <div class="candidate-info">
+            <h4>Voto en blanco</h4>
+            <p>No apoyar a ningún candidato</p>
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <div class="results-container">
+      <h2>Resultados de la votación:</h2>
+      <div id="results"></div>
+    </div>
+  </div>
+
+  <script>
+    // Modal de bienvenida
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("email") === null) {
+        alert("Debes iniciar sesión para acceder al dashboard.");
+        window.location.href = "login.html";
+        return;
+      }
+      document.getElementById("welcome-modal").style.display = "flex";
+      document.getElementById("close-modal").addEventListener("click", () => {
+        document.getElementById("welcome-modal").style.display = "none";
+      });
+      updateResults(); // mostrar resultados al cargar
+    });
+
+    // Cargar navbar
+    fetch("navbar.html")
+      .then((response) => response.text())
+      .then((data) => {
+        document.getElementById("navbar-container").innerHTML = data;
+      });
+
+    // Enviar voto al backend
+    document.querySelectorAll(".vote-option").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        const selectedButton = event.currentTarget;
+        const option = selectedButton.dataset.option;
+
+        // Remover selección previa
+        document.querySelectorAll(".vote-option").forEach(btn => {
+          btn.classList.remove("selected");
+        });
+        selectedButton.classList.add("selected");
+
+        if (confirm(`¿Confirmas tu voto para ${option}?`)) {
+          try {
+            const response = await fetch("http://localhost:3000/api/votes/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ email, candidate: option })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              if (response.status === 409) {
+                alert("Ya has votado. No puedes votar nuevamente.");
+                return;
+              }
+              throw new Error(data.error || "Error al enviar el voto")
+            }
+
+            alert("¡Tu voto fue registrado exitosamente!");
+            updateResults();
+
+          } catch (error) {
+            console.error("Error al enviar el voto:", error);
+            alert("Hubo un error al intentar votar.");
+          }
+        }
+      });
+    });
+
+    // Obtener resultados reales desde el backend
+    async function updateResults() {
+      try {
+        const response = await fetch("http://localhost:3000/api/votes");
+        if (!response.ok) throw new Error("Error al obtener los resultados");
+
+        const votosJson = await response.json();
+        const votos = votosJson.votes        
+        if (votos.length === 0) {
+          document.getElementById("results").innerHTML = "No hay votos registrados aún.";
+          return;
+        }
+        console.log("Resultados obtenidos:", JSON.stringify(votos));
+        const resultsDiv = document.getElementById("results");
+        const votosPorCandidato = votos.reduce((acc, voto) => {
+          const cand = voto.candidate;
+          acc[cand] = (acc[cand] || 0) + 1;
+          return acc;
+        }, {});  
+    
+        const totalVotes = votos.length;
+        resultsDiv.innerHTML = "";
+
+        for (const [candidate, count] of Object.entries(votosPorCandidato)) {
+          const percentage = totalVotes > 0
+            ? ((count / totalVotes) * 100).toFixed(1)
+            : "0.0";
+
+          resultsDiv.innerHTML += `
+            <div class="result-item">
+              <span class="candidate-name">${candidate}</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percentage}%"></div>
+              </div>
+              <span class="vote-count">${count} votos (${percentage}%)</span>
+            </div>
+          `;
+        }
+
+      } catch (error) {
+        console.error("Error al actualizar resultados:", error);
+        document.getElementById("results").innerHTML = "No se pudieron cargar los resultados.";
+      }
+    }
+  </script>
+</body>
+</html>

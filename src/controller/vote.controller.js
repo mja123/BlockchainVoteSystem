@@ -28,6 +28,7 @@ export default class VoteController {
     }
 
     async getAllVotes() {
+        console.log("Retrieving all votes controller");
         try {
             const votes = await this.voteService.getAllVotes();
             return votes;

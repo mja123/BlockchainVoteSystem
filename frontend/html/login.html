@@ -30,7 +30,6 @@
                 <label class="remember-me">
                     <input type="checkbox" name="remember"> Recordar sesión
                 </label>
-                <a href="forgot-password.html" class="forgot-password">¿Olvidaste tu contraseña?</a>
             </div>
 
             <button type="submit">Ingresar</button>
@@ -76,23 +75,15 @@
 
                 if (!response.ok) {
                     // Mostrar errores del servidor
-                    if (data.errors) {
-                        data.errors.forEach(error => {
-                            const errorElement = document.getElementById(`${error.field}Error`);
-                            if (errorElement) {
-                                errorElement.textContent = error.message;
-                                errorElement.style.display = 'block';
-                            }
-                        });
-                    } else {
-                        throw new Error(data.message || 'Error en el servidor');
+                    if (response.status == 404) {
+                        throw new Error('Usuario no encontrado');                        
                     }
-                    return;
+                    throw new Error(data.message || 'Error en el servidor');
                 }
 
                 // Login exitoso
                 localStorage.setItem('email', email); // Almacenar token
-                window.location.href = 'dashboard.html'; // Redirigir
+                window.location.href = "dashboard.html"; // Redirigir
 
             } catch (error) {
                 // Manejar errores de red o validación
