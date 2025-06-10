@@ -46,7 +46,6 @@ export async function getContract() {
     identity: 'admin',
     discovery: { enabled: true, asLocalhost: true }
   });
-  console.log(await wallet.list());
   // 3. Get the network (channel) and contract
   const network = await gateway.getNetwork('mychannel');
   const contract = network.getContract('basic');

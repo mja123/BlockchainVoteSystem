@@ -78,6 +78,11 @@
   <script>
     // Modal de bienvenida
     window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("email") === null) {
+        alert("Debes iniciar sesión para acceder al dashboard.");
+        window.location.href = "login.html";
+        return;
+      }
       document.getElementById("welcome-modal").style.display = "flex";
       document.getElementById("close-modal").addEventListener("click", () => {
         document.getElementById("welcome-modal").style.display = "none";
@@ -117,8 +122,11 @@
             const data = await response.json();
 
             if (!response.ok) {
-              alert(data.message || "Error al registrar el voto.");
-              return;
+              if (response.status === 409) {
+                alert("Ya has votado. No puedes votar nuevamente.");
+                return;
+              }
+              throw new Error(data.error || "Error al enviar el voto")
             }
 
             alert("¡Tu voto fue registrado exitosamente!");
@@ -138,16 +146,27 @@
         const response = await fetch("http://localhost:3000/api/votes");
         if (!response.ok) throw new Error("Error al obtener los resultados");
 
-        const votos = await response.json();
+        const votosJson = await response.json();
+        const votos = votosJson.votes        
+        if (votos.length === 0) {
+          document.getElementById("results").innerHTML = "No hay votos registrados aún.";
+          return;
+        }
+        console.log("Resultados obtenidos:", JSON.stringify(votos));
         const resultsDiv = document.getElementById("results");
+        const votosPorCandidato = votos.reduce((acc, voto) => {
+          const cand = voto.candidate;
+          acc[cand] = (acc[cand] || 0) + 1;
+          return acc;
+        }, {});  
+    
+        const totalVotes = votos.length;
         resultsDiv.innerHTML = "";
 
-        const totalVotes = Object.values(votos).reduce((a, b) => a + b, 0);
-
-        for (const [candidate, count] of Object.entries(votos)) {
+        for (const [candidate, count] of Object.entries(votosPorCandidato)) {
           const percentage = totalVotes > 0
             ? ((count / totalVotes) * 100).toFixed(1)
-            : 0;
+            : "0.0";
 
           resultsDiv.innerHTML += `
             <div class="result-item">

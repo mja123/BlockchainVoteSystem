@@ -7,6 +7,7 @@ export default class UserController {
 
     async addUser(userData) {
         try {
+            console.log("Adding user controller");
             const userAdded = await this.userService.createUser(userData);
 
             if (userAdded < 1) {
@@ -19,6 +20,7 @@ export default class UserController {
     }
 
     async authenticate(userData) {
+        console.log("Authenticating user controller");
         try {
             const { email, password } = userData;
             const userAdded = await this.userService.authenticate(email, password);
@@ -29,6 +31,7 @@ export default class UserController {
     }
 
     async addUserVote(email, voteId) {
+        console.log("Adding user vote controller");
         try {
             const userUpdated = await this.userService.addUserVote(email, voteId);
             return userUpdated;
@@ -38,6 +41,7 @@ export default class UserController {
     }
 
     async userAlreadyVoted(email) {
+        console.log("Checking if user already voted controller");
         try {
             const userAlreadyVoted = await this.userService.doesUserVoted(email);
             return userAlreadyVoted;

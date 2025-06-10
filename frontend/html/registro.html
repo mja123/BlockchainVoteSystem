@@ -95,29 +95,20 @@
 
                 const data = await response.json();
 
-                if (!response.ok) {
-                    // Manejar errores del servidor
-                    if (data.errors) {
-                        data.errors.forEach(error => {
-                            const errorElement = document.getElementById(`${error.field}Error`);
-                            if (errorElement) {
-                                errorElement.textContent = error.message;
-                                errorElement.style.display = 'block';
-                            }
-                        });
-                    } else {
-                        throw new Error(data.message || 'Error en el registro');
+                if (!response.ok) {                
+                    if (response.status == 409) {
+                        throw new Error('Email ya registrado.');                        
                     }
-                    return;
+                    throw new Error(data.message || 'Error en el servidor');
                 }
 
                 // Registro exitoso
                 alert('¡Registro exitoso! Por favor inicia sesión');
-                window.location.href = 'login.html';
+                window.location.href = "login.html";
 
             } catch (error) {
                 // Manejar errores de red
-                document.getElementById('emailError').textContent = 'Error de conexión con el servidor';
+                document.getElementById('emailError').textContent = error.message;
                 document.getElementById('emailError').style.display = 'block';
                 console.error('Error:', error);
             }
