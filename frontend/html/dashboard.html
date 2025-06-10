@@ -1,4 +1,3 @@
-<!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VoteChain - Dashboard</title>
   <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <script>
-    // Bloquear acceso sin login
     const email = localStorage.getItem("email");
     if (!email) {
       alert("Debes iniciar sesión para acceder al dashboard.");
@@ -72,11 +71,16 @@
     <div class="results-container">
       <h2>Resultados de la votación:</h2>
       <div id="results"></div>
+
+      <h3>Gráfico de distribución:</h3>
+      <canvas id="voteChart" width="400" height="400"></canvas>
     </div>
   </div>
 
   <script>
-    // Modal de bienvenida
+    let voteChart; // referencia global al gráfico
+
+    // Mostrar modal al cargar
     window.addEventListener("DOMContentLoaded", () => {
       if (localStorage.getItem("email") === null) {
         alert("Debes iniciar sesión para acceder al dashboard.");
@@ -87,17 +91,15 @@
       document.getElementById("close-modal").addEventListener("click", () => {
         document.getElementById("welcome-modal").style.display = "none";
       });
-      updateResults(); // mostrar resultados al cargar
+      updateResults();
     });
 
     // Cargar navbar
     fetch("navbar.html")
-      .then((response) => response.text())
-      .then((data) => {
-        document.getElementById("navbar-container").innerHTML = data;
-      });
+      .then(res => res.text())
+      .then(html => document.getElementById("navbar-container").innerHTML = html);
 
-    // Enviar voto al backend
+    // Evento de votación
     document.querySelectorAll(".vote-option").forEach((button) => {
       button.addEventListener("click", async (event) => {
         const selectedButton = event.currentTarget;
@@ -134,12 +136,38 @@
 
           } catch (error) {
             console.error("Error al enviar el voto:", error);
-            alert("Hubo un error al intentar votar.");
+            alert("No se pudo registrar el voto. Intenta nuevamente.");
           }
         }
       });
     });
 
+  function renderChart(voteData) {
+        const ctx = document.getElementById('voteChart').getContext('2d');
+        const labels = Object.keys(voteData);
+        const counts = Object.values(voteData);
+
+        if (voteChart) voteChart.destroy();
+
+        voteChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: counts,
+              backgroundColor: ['#4e79a7', '#f28e2b', '#e15759'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' }
+            }
+          }
+        });
+      }
+      
     // Obtener resultados reales desde el backend
     async function updateResults() {
       try {
@@ -162,7 +190,7 @@
     
         const totalVotes = votos.length;
         resultsDiv.innerHTML = "";
-
+        
         for (const [candidate, count] of Object.entries(votosPorCandidato)) {
           const percentage = totalVotes > 0
             ? ((count / totalVotes) * 100).toFixed(1)
@@ -178,7 +206,7 @@
             </div>
           `;
         }
-
+        renderChart(votosPorCandidato);
       } catch (error) {
         console.error("Error al actualizar resultados:", error);
         document.getElementById("results").innerHTML = "No se pudieron cargar los resultados.";
